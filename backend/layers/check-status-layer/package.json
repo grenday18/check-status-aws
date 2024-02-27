@@ -1,0 +1,28 @@
+{
+  "name": "item-categories-layer",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "cp package.json dist/nodejs/node_modules/item-categories-layer/package.json && cd dist/nodejs/node_modules/item-categories-layer && yarn install --production --frozen-lockfile",
+    "build-without-install": "tsc && cp package.json dist/nodejs/node_modules/item-categories-layer/package.json && cp -r node_modules dist/nodejs/node_modules/item-categories-layer/node_modules"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.278.0",
+    "@aws-sdk/client-sns": "^3.278.0",
+    "@aws-sdk/lib-dynamodb": "^3.278.0",
+    "@sentry/serverless": "^6.18.2",
+    "ajv": "^8.11.0",
+    "ajv-errors": "^3.0.0",
+    "axios": "^0.26.0",
+    "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "parse-multipart": "^1.0.4",
+    "ulid": "^2.3.0"
+  },
+  "devDependencies": {
+    "typescript": "4.6.2"
+  }
+}

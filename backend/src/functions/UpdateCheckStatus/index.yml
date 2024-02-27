@@ -1,0 +1,12 @@
+UpdateCheckStatus:
+  name: update-check-status-dev
+  # name: update-check-status-${opt:stage}
+  # role:
+  #   Fn::ImportValue: ${self:custom.infra}-UpdateCheckStatusRole
+  # layers:
+  #   - { Ref: CheckStatus }
+  events:
+    - httpApi:
+        method: get
+        path: /api/v1/check-status
+  handler: ./src/functions/UpdateCheckStatus/handler.updateCheckStatus

@@ -1,0 +1,6 @@
+Resources:
+  AppStatusBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: app-status-bucket-${opt:stage}

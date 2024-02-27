@@ -1,0 +1,30 @@
+service: "check-status-aws-infra"
+frameworkVersion: "3"
+
+package:
+  individually: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    NODE_OPTIONS: "--enable-source-maps --stack-trace-limit=1000"
+
+resources:
+  - ${file(resources/buckets/app-status-bucket.yml)}
+  - ${file(resources/roles/update-check-status-role.yml)}
+  - ${file(resources/managed-policies.yml)}
+  - Outputs:
+      AppStatusBucket:
+        Value:
+          Fn::GetAtt: [ AppStatusBucket, Arn ]
+        Export:
+          Name:
+            'Fn::Sub': ${AWS::StackName}-AppStatusBucket
+      UpdateCheckStatusRole:
+        Value:
+          Fn::GetAtt: [ UpdateCheckStatusRole, Arn ]
+        Export:
+          Name:
+            'Fn::Sub': ${AWS::StackName}-UpdateCheckStatusRole

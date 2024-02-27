@@ -1,0 +1,7 @@
+.serverless
+.esbuild
+/lib
+.build
+yarn.lock
+node_modules
+/package-lock.json

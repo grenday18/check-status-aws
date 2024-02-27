@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "serverless deploy --stage prod",
+    "remove:dev": "serverless remove --stage dev",
+    "remove:prod": "serverless remove --stage prod"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.25",
+    "serverless-esbuild": "^1.25.0"
+  }
+}

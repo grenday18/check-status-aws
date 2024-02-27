@@ -1,0 +1,47 @@
+Resources:
+  LogsCloudWatch:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: logs-cloud-watch-${opt:stage}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+            Effect: Allow
+            Action:
+              - "logs:CreateLogGroup"
+              - "logs:CreateLogStream"
+              - "logs:PutLogEvents"
+            Resource: '*'
+  UpdateObjectS3:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: update-object-s3-${opt:stage}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+            Effect: Allow
+            Action:
+              - "s3:PutObject"
+            Resource: '*'
+  GetObjectS3:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: get-object-s3-${opt:stage}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+            Effect: Allow
+            Action:
+              - "s3:GetObject"
+            Resource: '*'
+  ListObjectS3:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: list-object-s3-${opt:stage}
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+            Effect: Allow
+            Action:
+              - "s3:ListObject"
+            Resource: '*'

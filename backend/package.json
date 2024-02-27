@@ -1,0 +1,32 @@
+{
+  "name": "check-status-lambdas",
+  "version": "1.0.0",
+  "description": "Serverless aws-nodejs-typescript template",
+  "main": "serverless.yml",
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "install:check-status-layer": "cd ./layers/check-status-layer/ && yarn install && yarn build",
+    "refresh-layers": "bash ./refresh-layers.sh",
+    "dev": "serverless offline",
+    "deploy:dev": "serverless deploy --stage dev",
+    "deploy:prod": "yarn install:check-status-layer && serverless deploy --stage prod",
+    "remove:dev": "serverless remove --stage dev",
+    "remove:prod": "serverless remove --stage prod"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.134",
+    "esbuild": "^0.20.1",
+    "serverless": "^3.38.0",
+    "serverless-esbuild": "^1.51.0",
+    "serverless-offline": "^13.3.3",
+    "serverless-plugin-typescript": "^2.1.5",
+    "typescript": "^5.3.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint . --ext .ts --max-warnings=0"
+    ]
+  },
+  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
+  "license": "MIT"
+}

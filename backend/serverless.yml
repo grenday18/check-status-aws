@@ -1,0 +1,54 @@
+service: "check-status-aws-backend"
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+# package:
+  # individually: true
+
+custom:
+  infra: check-status-aws-infra-${opt:stage}
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+#     exclude: ["aws-sdk", "check-status-layer"]
+#     target: node
+#     watch:
+#       ignore: ["layers"]
+#     define:
+#       require.resolve: undefined
+    platform: node
+    concurrency: 10
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  timeout: 30
+  httpApi:
+    cors:
+      allowedOrigins: "*"
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Auth-Token
+        - X-Data-Source
+      allowedMethods:
+        - OPTIONS
+        - GET
+      maxAge: 6000 # In seconds
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+
+# layers:
+#   CheckStatus:
+#     path: layers/check-status-layer/dist
+#     compatibleRuntimes:
+#       - nodejs20.x
+
+functions:
+  - ${file(./src/functions/UpdateCheckStatus/index.yml)}
