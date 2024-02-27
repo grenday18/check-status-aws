@@ -1,0 +1,9 @@
+GetCheckStatus:
+  name: get-check-status-${opt:stage}
+  layers:
+    - { Ref: CheckStatusLambdaLayer }
+  events:
+    - httpApi:
+        method: get
+        path: /api/v1/check-status
+  handler: ./src/functions/GetCheckStatus/handler.getCheckStatus

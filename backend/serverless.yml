@@ -10,17 +10,20 @@ plugins:
   # individually: true
 
 custom:
-  infra: check-status-aws-infra-${opt:stage}
+  dev:
+    infra: check-status-aws-infra-dev
+    bucketName: app-status-bucket-dev
+    region: us-east-1
   esbuild:
     bundle: true
     minify: false
     sourcemap: true
-#     exclude: ["aws-sdk", "check-status-layer"]
-#     target: node
-#     watch:
-#       ignore: ["layers"]
-#     define:
-#       require.resolve: undefined
+    exclude: ["aws-sdk", "check-status-layer"]
+    target: node20
+    watch:
+      ignore: ["layers"]
+    define:
+      require.resolve: undefined
     platform: node
     concurrency: 10
 
@@ -43,12 +46,17 @@ provider:
   apiGateway:
     minimumCompressionSize: 1024
     shouldStartNameWithService: true
+  environment:
+    infra: ${self:custom.${opt:stage}.infra}
+    bucketName: ${self:custom.${opt:stage}.bucketName}
+    region: ${self:custom.${opt:stage}.region}
 
-# layers:
-#   CheckStatus:
-#     path: layers/check-status-layer/dist
-#     compatibleRuntimes:
-#       - nodejs20.x
+layers:
+  CheckStatus:
+    path: layers/check-status-layer/dist
+    compatibleRuntimes:
+      - nodejs20.x
 
 functions:
+  - ${file(./src/functions/GetCheckStatus/index.yml)}
   - ${file(./src/functions/UpdateCheckStatus/index.yml)}

@@ -1,6 +1,3 @@
-import { errorCodes } from "../errors"
-import Sentry from "./Sentry"
-
 interface IError {
   code: string
   message: string
@@ -31,12 +28,6 @@ class ApiGatewayHelper {
     let httpCode: number = error?.httpStatusCode
     const errorCode: string = error?.code
     let message: string = error?.message
-
-    if (!errorCodes.find(value => value === errorCode)) {
-      httpCode = 500
-      Sentry.captureException(error)
-      message = "Unexpected error"
-    }
 
     return this.response(
       {

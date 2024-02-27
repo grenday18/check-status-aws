@@ -8,9 +8,10 @@
     "install:check-status-layer": "cd ./layers/check-status-layer/ && yarn install && yarn build",
     "refresh-layers": "bash ./refresh-layers.sh",
     "dev": "serverless offline",
-    "deploy:dev": "serverless deploy --stage dev",
-    "deploy:prod": "yarn install:check-status-layer && serverless deploy --stage prod",
+    "deploy:dev": "yarn install:check-status-layer && serverless deploy --stage dev && yarn copy-urls:dev",
     "remove:dev": "serverless remove --stage dev",
+    "copy-urls:dev": "aws s3 cp src/urlsToCheck.json s3://app-status-bucket-dev/",
+    "deploy:prod": "yarn install:check-status-layer && serverless deploy --stage prod && yarn copy-urls:prod",
     "remove:prod": "serverless remove --stage prod"
   },
   "devDependencies": {

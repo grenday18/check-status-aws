@@ -1,12 +1,14 @@
 UpdateCheckStatus:
-  name: update-check-status-dev
-  # name: update-check-status-${opt:stage}
-  # role:
-  #   Fn::ImportValue: ${self:custom.infra}-UpdateCheckStatusRole
-  # layers:
-  #   - { Ref: CheckStatus }
+  name: update-check-status-${opt:stage}
+  role:
+    Fn::ImportValue: ${self:custom.${opt:stage}.infra}-UpdateCheckStatusRole
+  layers:
+    - { Ref: CheckStatusLambdaLayer }
+  handler: ./src/functions/UpdateCheckStatus/handler.updateCheckStatus
   events:
     - httpApi:
         method: get
-        path: /api/v1/check-status
-  handler: ./src/functions/UpdateCheckStatus/handler.updateCheckStatus
+        path: /api/v1/check-status-all
+    - eventBridge:
+        name: event-bridge-update-check-status
+        schedule: rate(2 minutes)

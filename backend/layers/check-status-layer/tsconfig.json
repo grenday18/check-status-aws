@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "module": "commonjs",
     "target": "ES2020",
-    "outDir": "./dist/nodejs/node_modules/item-categories-layer"
+    "outDir": "./dist/nodejs/node_modules/check-status-layer"
   },
   "include": ["src/**/*.ts"]
 }

@@ -1,73 +1,84 @@
-import request, { AxiosError } from "axios"
-import AuthContext from "./AuthContext"
-import Sentry from "./Sentry"
-import { APIGatewayEvent } from "aws-lambda"
-import * as parseMultipart from "parse-multipart"
+import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import request from "axios"
+import { IDataStatus } from "../interfaces";
+import moment from "moment";
 
-const logsRequestErrors = (key: string, error: AxiosError, authContext: AuthContext) => {
-  if(error.isAxiosError) return
-  console.log(key, {
-    organization: authContext.organization,
-    user: {
-      email: authContext.user.email,
-      id: authContext.user.id,
-      legacyId: authContext.user.legacyId,
-    },
-    error
-  })
-}
-
-const parseMultipartBody = (event: APIGatewayEvent) => {
-  const boundary = parseMultipart.getBoundary(event.headers["content-type"])
-  const parts = parseMultipart.Parse(Buffer.from(event.body, "base64"), boundary)
-  const [{ filename, data }] = parts
-  return {
-    filename,
-    data
-  }
-}
-
-const canBeDeleted = async (id: string, authContext: AuthContext) => {
-  const baseUrl = process.env.BASE_API_URL
-  const url = `v1/item-categories/options/${id}`
-
+const checkStatus = async (url: string) => {
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Basic ${authContext.user.legacyBasicToken}`,
-    "Access-Key": process.env.ACCESSKEY,
-    "Origin": process.env.HEADER_ORIGIN,
-    "X-Data-Source": "micro-items-categories"
   }
+
+  const response : IDataStatus = {
+    url: url,
+    hour: moment().hours(),
+    minute: moment().minutes(),
+    status: false
+  }
+
   try {
-    const response = await request.get(baseUrl + url, {
+    const res = await request.get(url, {
       headers
     })
-    return response.data.deletable
+    response.status = res.data ? true : false
   } catch (err) {
-    Sentry.captureException(err)
-    return false
+    response.status = false
+  }
+  
+  return response
+}
+
+const getStatusData = async () => {
+  
+  const client = new S3Client({ region: process.env.region, logger: undefined })
+  const input = {
+    Bucket: process.env.bucketName,
+    Key: moment().format("YYYY-MM-DD") + ".json",
+  }
+
+  try {
+    const command = new GetObjectCommand(input)
+    const response = await client.send(command)
+    const data = await response.Body?.transformToString()
+    return JSON.parse(data);
+  } catch(err) {
+    console.log("error", err)
+    return []
   }
 }
 
-const getLanguageVersion = async (authContext: AuthContext) => {
-  const baseUrl = process.env.BASE_API_URL
-  const url = "v1/users/self"
-
-  const headers = {
-    "Content-Type": "application/json",
-    Authorization: `Basic ${authContext.user.legacyBasicToken}`,
-    "X-Data-Source": "micro-items-categories"
+const getUrlsToCheck = async () => {
+  
+  const client = new S3Client({ region: process.env.region, logger: undefined })
+  const input = {
+    Bucket: process.env.bucketName,
+    Key: "urlsToCheck.json",
   }
-  return "es"
+
   try {
-    const response = await request.get(baseUrl + url, {
-      headers
-    })
-    return response.data.language
-  } catch (err) {
-    Sentry.captureException(err)
-    return "es"
+    const command = new GetObjectCommand(input)
+    const response = await client.send(command)
+    const data = await response.Body?.transformToString()
+    return JSON.parse(data);
+  } catch(err) {
+    console.log("error", err)
+    return []
   }
 }
 
-export { canBeDeleted, getLanguageVersion, parseMultipartBody, logsRequestErrors }
+const updateDataStatus = async (data: IDataStatus[]) => {
+
+  try {
+    const client = new S3Client({ region: process.env.region, logger: undefined })
+    const input = {
+      Bucket: process.env.bucketName,
+      Key: moment().format("YYYY-MM-DD") + ".json",
+      Body: JSON.stringify(data)
+    }
+    const command = new PutObjectCommand(input);
+    await client.send(command);
+  } catch(err) {
+    console.log("error", err)
+  }
+}
+
+export { checkStatus, getStatusData, getUrlsToCheck, updateDataStatus }
