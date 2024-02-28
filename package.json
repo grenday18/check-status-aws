@@ -4,10 +4,12 @@
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.yml",
   "scripts": {
-    "deploy": "yarn deploy:infra",
+    "deploy": "yarn deploy:infra && yarn deploy:back",
     "deploy:infra": "cd ./infra && yarn deploy:dev",
     "deploy:back": "cd ./backend && yarn deploy:dev",
-    "remove:infra": "cd ./infra && yarn remove:dev"
+    "remove": "yarn remove:back && yarn remove:infra",
+    "remove:infra": "cd ./infra && yarn remove:dev",
+    "remove:back": "cd ./backend && yarn remove:dev"
   },
   "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
   "license": "MIT"

@@ -13,4 +13,4 @@ El proyecto está estructurado en 2 carpetas:<ul>
 
 
 ###### Tips:
-en caso de que no se ejecute correctamente los comandos debido al uso de "cp" en widows, te recomiendo ejecutar los comandos uno por uno en el powershell:
+en caso de que no se ejecute correctamente los comandos debido al uso de "cp" en widows, te recomiendo ejecutar los comandos uno por uno en el powershell.
